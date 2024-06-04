@@ -36,6 +36,9 @@ const App = () => {
     }
   }, [])
 
+  const handleUsernameChange = ({ target }) => setUsername(target.value)
+  const handlePasswordChange = ({ target }) => setPassword(target.value)
+
   const toggleImportanceOf = (id) => {
     const note = notes.find((n) => n.id === id)
     const changedNote = { ...note, important: !note.important }
@@ -54,9 +57,10 @@ const App = () => {
         }, 5000)
       })
   }
+
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log(`tried to log in with ${username} ${password}`)
+
     try {
       const user = await loginService.login({ username, password })
       noteService.setToken(user.token)
@@ -72,13 +76,17 @@ const App = () => {
       }, 5000)
     }
   }
-  const handleUsernameChange = ({ target }) => setUsername(target.value)
-  const handlePasswordChange = ({ target }) => setPassword(target.value)
+
+  const handleLogout = () => {
+    setUser(null)
+    window.localStorage.clear()
+  }
 
   const createNote = async (noteObject) => {
     const returnedNote = await noteService.create(noteObject)
     setNotes((prev) => prev.concat(returnedNote))
   }
+  
   const notesToShow = showAll ? notes : notes.filter((note) => note.important)
 
   return (
@@ -96,9 +104,12 @@ const App = () => {
           />
         </Togglable>
       ) : (
-        <Togglable buttonLabel="new note">
-          <NoteForm createNote={createNote}></NoteForm>
-        </Togglable>
+        <div>
+          <Togglable buttonLabel="new note">
+            <NoteForm createNote={createNote}></NoteForm>
+          </Togglable>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
       )}
       <div>
         <button onClick={() => setShowAll(!showAll)}>
