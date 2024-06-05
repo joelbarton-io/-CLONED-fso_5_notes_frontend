@@ -59,8 +59,8 @@ const App = () => {
     try {
       const user = await loginService.login(credentials)
       noteService.setToken(user.token)
-
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      setErrorMessage(`${user.username} logged in`)
       setUser(user)
     } catch (exception) {
       setErrorMessage('Incorrect Credentials')
